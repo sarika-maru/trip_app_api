@@ -23,6 +23,24 @@ var add_user=(req,res)=>{
     });
 }
 
+var update_profile=(req,res)=>{
+
+}
+
+var getUserByToken=(req,res)=>{
+    var token= req.query.token;
+    User.findByToken(token).then((user)=>{
+
+        if(!user){
+            return promise.reject();
+        }
+        console.log("user inside middleware"+ user);
+        res.json(user);
+    }).catch((e)=>{
+        res.status(401).send();
+    })
+}
+
 var logIn=((username,password,done)=> {
     User.findOne({username, password}, function (user, err) {
         if (err) {
@@ -38,4 +56,4 @@ var logIn=((username,password,done)=> {
 
 
 
-module.exports={add_user, logIn}
+module.exports={add_user, logIn, getUserByToken}

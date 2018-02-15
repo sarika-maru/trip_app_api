@@ -1,4 +1,4 @@
-const {add_user}= require('./../controller/userController');
+const {add_user,getUserByToken}= require('./../controller/userController');
 const {GetAllTrip,add_trip}= require('./../controller/TripController');
 exports.route=(app)=>{
 
@@ -7,4 +7,6 @@ exports.route=(app)=>{
     app.get('/GetAllTrip',GetAllTrip);
 
     app.post('/AddTrip', add_trip);
+
+    app.get('/GetUserByToken',getUserByToken);
 }

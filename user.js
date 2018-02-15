@@ -12,12 +12,14 @@ var {logIn} = require('./controller/userController');
 var googleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var githubStrategy = require('passport-github').Strategy;
 var findOrCreate = require('mongoose-findorcreate');
-
+var {authenticate} = require('./middleware/authenticate')
 
 const  app= express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(passport.initialize());
+var token="";
+global.storeToken="";
 
 passport.use(new localStrategy(function (username, password, done) {
 
@@ -33,9 +35,9 @@ passport.use(new localStrategy(function (username, password, done) {
                 return done(null,false);
             }
             if(res){
-                var token= jwt.sign({username: user.username, password: user.password}, "abc123");
+                token= jwt.sign({_id: user._id.toHexString()}, "abc123").toString();
 
-                User.findOneAndsUpdate({username:user.username, password:user.password},{
+                User.findOneAndUpdate({username:user.username, password:user.password},{
                     $set:{
                         token:token
                     }
@@ -60,11 +62,22 @@ passport.use(new googleStrategy({
     callbackURL:'http://localhost:8888/trip_app/auth/google/callback'
 },
     function (token,tokenSecret, profile, done) {
-    console.log(profile);
+    //console.log(profile);
             User.findOrCreate({username : profile.emails[0].value},
                 function (err,user) {
-                    console.log(user);
-                    return done(err,user);
+                   // console.log(user);
+                    token= token;
+
+                    User.findOneAndUpdate({username:user.username, password:user.password},{
+                        $set:{
+                            token:token
+                        }
+                    }).then((docs)=>{
+                        return done(err,user);
+                    }).catch((ex)=>{
+                        return done(null,false);
+                    })
+
                 })
     }
 ))
@@ -77,7 +90,19 @@ passport.use(new githubStrategy({
     function (accessToken,refreshToken, profile, done) {
         User.findOrCreate({username : profile.username},
             function (err,user) {
-                return done(err,user);
+
+                token= accessToken;
+
+                User.findOneAndUpdate({username:user.username, password:user.password},{
+                    $set:{
+                        token:token
+                    }
+                }).then((docs)=>{
+                    return done(err,user);
+                }).catch((ex)=>{
+                    return done(null,false);
+                })
+
             })
     }
 ))
@@ -96,7 +121,8 @@ app.post('/UserLoginForm',passport.authenticate('local',{ successRedirect : '/',
 
 
 app.get('/',(req,res)=>{
-    res.json("You are succesfully login");
+    storeToken = token;
+    res.json(token);
 });
 
 app.get('/err',(req,res)=>{
@@ -120,6 +146,18 @@ app.get('/trip_app/auth/github/callback', passport.authenticate('github',{failur
         res.json("success");
     }
 )
+
+//logout
+app.delete('/UserLogout/token', authenticate ,(req,res)=>{
+    console.log("user inside logout method"+req.user);
+    console.log("user inside logout method"+storeToken);
+    req.user.removeToken(storeToken).then(()=>{
+        //console.log("token succesfully removed");
+        res.json("success");
+    },(err)=>{
+        res.json("Error");
+    })
+});
 
 route.route(app);
 

@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 var GetAllTrip =(req,res)=>{
     Trip.find().then((docs)=>{
-        console.log(docs);
         var newArr=[];
         docs.map((val,_key)=>{
             var obj={
@@ -38,7 +37,6 @@ var GetAllTrip =(req,res)=>{
 var add_trip =((req,res)=>{
     var trip= new Trip({trip_name :req.body.trip_name,places : req.body.places, no_of_days: req.body.no_of_days,food:req.body.food,per_person_price:req.body.per_person_price,description: req.body.description,image: req.body.image});
     trip.save().then((trip)=>{
-        console.log(trip);
         res.json("Successfully Inserted");
     },(err)=>{
         res.json("Failed To Insert"+ err);

@@ -2,6 +2,7 @@ const mongoose= require('mongoose');
 const bcrypt= require('bcryptjs');
 const Schema = mongoose.Schema;
 var findOrCreate = require('mongoose-findorcreate');
+var jwt= require('jsonwebtoken');
 
 const UserSchema=new Schema({
     username:{
@@ -37,6 +38,36 @@ UserSchema.pre('save',function (next) {
     }
 
 })
+
+UserSchema.methods.removeToken = function (tokens) {
+    var user= this;
+    console.log("token inside remove token"+ user);
+    return user.update({
+        $set:{
+            token: ""
+            }
+        })
+};
+
+UserSchema.statics.findByToken = function (token) {
+    var User = this;
+    var decode;
+
+    try {
+        decode= jwt.verify(token,'abc123');
+        console.log("try "+decode);
+    }catch (e) {
+        console.log("catch"+ e);
+        return Promise.reject();
+    }
+
+
+    return User.findOne({
+        '_id' : decode,
+        'token' : token
+    });
+};
+
 UserSchema.plugin(findOrCreate);
 const User = mongoose.model("User", UserSchema);
 
