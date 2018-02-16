@@ -147,17 +147,6 @@ app.get('/trip_app/auth/github/callback', passport.authenticate('github',{failur
     }
 )
 
-//logout
-app.delete('/UserLogout/token', authenticate ,(req,res)=>{
-    console.log("user inside logout method"+req.user);
-    console.log("user inside logout method"+storeToken);
-    req.user.removeToken(storeToken).then(()=>{
-        //console.log("token succesfully removed");
-        res.json("success");
-    },(err)=>{
-        res.json("Error");
-    })
-});
 
 route.route(app);
 

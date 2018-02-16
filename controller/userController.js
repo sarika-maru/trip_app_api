@@ -4,6 +4,7 @@ const localStrategy= require('passport-local').Strategy;
 const express= require('express');
 const bodyParser= require('body-parser');
 const jwt=require('jsonwebtoken');
+const authenticate = require('./../middleware/authenticate');
 
 
 
@@ -24,17 +25,28 @@ var add_user=(req,res)=>{
 }
 
 var update_profile=(req,res)=>{
-
+    User.findOneAndUpdate({token: req.token},{
+        $set:{
+            city:req.body.city
+        }
+    }).then((docs)=>{
+        res.json("1")
+    },(err)=>{
+        res.json("0");
+    }).catch((ex)=>{
+        res.json("0");
+    });
 }
 
 var getUserByToken=(req,res)=>{
     var token= req.query.token;
+    console.log("tkejk"+token);
     User.findByToken(token).then((user)=>{
 
         if(!user){
             return promise.reject();
         }
-        console.log("user inside middleware"+ user);
+
         res.json(user);
     }).catch((e)=>{
         res.status(401).send();
@@ -54,6 +66,15 @@ var logIn=((username,password,done)=> {
     })
 });
 
+var logout=(req,res)=>{
+    req.user.removeToken(req.token).then(()=>{
+        res.json("success");
+    },(err)=>{
+        res.json("Error");
+    }).catch((ex)=>{
+        res.json("Error");
+    })
+}
 
 
-module.exports={add_user, logIn, getUserByToken}
+module.exports={add_user, logIn, getUserByToken,update_profile,logout}

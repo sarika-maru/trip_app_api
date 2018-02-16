@@ -41,7 +41,6 @@ UserSchema.pre('save',function (next) {
 
 UserSchema.methods.removeToken = function (tokens) {
     var user= this;
-    console.log("token inside remove token"+ user);
     return user.update({
         $set:{
             token: ""
