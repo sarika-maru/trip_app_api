@@ -8,6 +8,14 @@ const BookTripSchema = new Schema ({
     },user_id:{
         type: Schema.Types.ObjectId,
         ref: ['User']
+    },number_of_person:[{
+        name:{
+            type:String
+        },age:{
+            type:Number
+        }
+    }],totalAmount:{
+        type:Number
     }
 })
 

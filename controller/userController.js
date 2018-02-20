@@ -20,7 +20,7 @@ var add_user=(req,res)=>{
     },(err)=>{
         res.json("Failed To Insert"+ err);
     }).catch((ex)=>{
-        console.log("exception");
+        res.json("exception"+ ex);
     });
 }
 
@@ -39,7 +39,7 @@ var update_profile=(req,res)=>{
 }
 
 var getUserByToken=(req,res)=>{
-    var token= req.query.token;
+    var token= req.params.token;
     console.log("tkejk"+token);
     User.findByToken(token).then((user)=>{
 

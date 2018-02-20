@@ -1,5 +1,6 @@
 const {add_user,getUserByToken,update_profile,logout}= require('./../controller/userController');
 const {GetAllTrip,add_trip}= require('./../controller/TripController');
+const {book_trip, AllBookTrip,GetOneBookTrip}= require('./../controller/BookTripController');
 const {authenticate} = require('./../middleware/authenticate');
 exports.route=(app)=>{
 
@@ -11,9 +12,17 @@ exports.route=(app)=>{
 
 
    // private route
-    app.delete('/UserLogout',authenticate,logout);
 
-    app.get('/GetUserByToken',getUserByToken);
+    app.delete('/UserLogout/:token',authenticate,logout);
 
-    app.patch('/UpdateProfile',authenticate,update_profile);
+    app.get('/GetUserByToken/:token',getUserByToken);
+
+    app.patch('/UpdateProfile/:token',authenticate,update_profile);
+
+    app.post('/BookTrip/:token',authenticate, book_trip);
+
+    app.get('/API/BookTrip/:token',authenticate,AllBookTrip);
+
+    app.get('/API/GetBookTrip/:token/:id', authenticate, GetOneBookTrip);
+
 }
