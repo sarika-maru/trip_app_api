@@ -2,7 +2,7 @@ const {User} = require('./../model/user.model');
 const jwt = require('jsonwebtoken');
 
 var authenticate = (req,res,next)=>{
-    var token= req.params.token;
+    var token= req.header('x-auth');
     console.log("inside middleware  : "+token);
     User.findByToken(token).then((user)=>{
 
@@ -13,8 +13,8 @@ var authenticate = (req,res,next)=>{
         req.user =user;
         req.token =token;
         next();
-    }).catch((e)=>{
-        res.status(401).send();
+    }).catch((ex)=>{
+        res.status(401).send(ex);
     })
 }
 

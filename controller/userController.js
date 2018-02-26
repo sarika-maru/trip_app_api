@@ -5,22 +5,20 @@ const express= require('express');
 const bodyParser= require('body-parser');
 const jwt=require('jsonwebtoken');
 const authenticate = require('./../middleware/authenticate');
-
-
-
-const db = require('./../config/db');
 const {User}= require('../model/user.model');
 
 var add_user=(req,res)=>{
 
     var user = new User({username: req.body.username, password : req.body.password, city : req.body.city});
     user.save().then((user)=>{
-        console.log(user);
-        res.json("Successfully Inserted");
+        if(!user){
+            res.status(404).json(user);
+        }
+        res.status(200).json(user);
     },(err)=>{
-        res.json("Failed To Insert"+ err);
+        res.status(404).json("Failed To Insert :"+ err);
     }).catch((ex)=>{
-        res.json("exception"+ ex);
+        res.status(401).json("Exception :"+ ex);
     });
 }
 
@@ -49,7 +47,7 @@ var getUserByToken=(req,res)=>{
 
         res.json(user);
     }).catch((e)=>{
-        res.status(401).send();
+        res.status(401).send(e);
     })
 }
 
@@ -68,11 +66,11 @@ var logIn=((username,password,done)=> {
 
 var logout=(req,res)=>{
     req.user.removeToken(req.token).then(()=>{
-        res.json("success");
+        res.status(200).json("success");
     },(err)=>{
-        res.json("Error");
+        res.status(404).json("Error");
     }).catch((ex)=>{
-        res.json("Error");
+        res.status(401).json("Exception");
     })
 }
 
