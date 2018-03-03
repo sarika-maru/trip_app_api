@@ -5,6 +5,7 @@ const {authenticate} = require('./../middleware/authenticate');
 const passportLocal = require('./../auth/localStrategy');
 const passportGoogle= require('./../auth/googleStartegy');
 const passportGithub= require('./../auth/githubStrategy');
+
 exports.route=(app)=>{
 
     //local startegy
@@ -53,7 +54,7 @@ exports.route=(app)=>{
 
     app.get('/User',authenticate,getUserByToken);
 
-    app.put('/UpdateProfile/:token',authenticate,update_profile);
+    app.put('/User',authenticate,update_profile);
 
     app.post('/BookTrip/:token',authenticate, book_trip);
 

@@ -28,16 +28,16 @@ var update_profile=(req,res)=>{
             city:req.body.city
         }
     }).then((docs)=>{
-        res.json("1")
+        res.status(200).json("succes");
     },(err)=>{
-        res.json("0");
+        res.status(404).json("Error");
     }).catch((ex)=>{
-        res.json("0");
+        res.status(401).json("Exception");
     });
 }
 
 var getUserByToken=(req,res)=>{
-    var token= req.params.token;
+    var token= req.token;
     console.log("tkejk"+token);
     User.findByToken(token).then((user)=>{
 
@@ -65,13 +65,14 @@ var logIn=((username,password,done)=> {
 });
 
 var logout=(req,res)=>{
+    //console.log(req.token);
     req.user.removeToken(req.token).then(()=>{
         res.status(200).json("success");
     },(err)=>{
         res.status(404).json("Error");
     }).catch((ex)=>{
         res.status(401).json("Exception");
-    })
+    });
 }
 
 
