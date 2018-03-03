@@ -65,8 +65,8 @@ var logIn=((username,password,done)=> {
 });
 
 var logout=(req,res)=>{
-    //console.log(req.token);
-    req.user.removeToken(req.token).then(()=>{
+    console.log(req.token);
+    req.user.removeToken(req.token).then((response)=>{
         res.status(200).json("success");
     },(err)=>{
         res.status(404).json("Error");

@@ -14,7 +14,7 @@ exports.route=(app)=>{
 
 
     app.get('/',(req,res)=>{
-        res.header('x-auth',storeToken).send("success");
+        res.header('x-auth',storeToken).json("success");
         //res.status(200).json(storeToken);
     });
 
